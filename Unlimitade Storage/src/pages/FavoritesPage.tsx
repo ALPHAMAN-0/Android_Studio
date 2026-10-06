@@ -7,6 +7,7 @@ import { useFavorites } from "@/hooks/use-files";
 import * as db from "@/lib/services/database";
 import { deleteMessage } from "@/lib/services/telegram";
 import { getSettings } from "@/lib/services/settings";
+import { sanitizeName } from "@/lib/utils";
 import type { FileItem } from "@/types";
 
 export function FavoritesPage() {
@@ -31,8 +32,10 @@ export function FavoritesPage() {
   };
 
   const handleRenameFile = async (fileId: string, currentName: string) => {
-    const newName = prompt("Rename file:", currentName);
-    if (newName && newName !== currentName) {
+    const raw = prompt("Rename file:", currentName);
+    const newName = raw ? sanitizeName(raw) : null;
+    if (!newName) { if (raw !== null) toast.error("Invalid file name"); return; }
+    if (newName !== currentName) {
       await db.updateFile(fileId, { originalName: newName });
       mutate();
     }
