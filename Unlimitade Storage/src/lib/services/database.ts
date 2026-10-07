@@ -85,7 +85,13 @@ export async function initDatabase(): Promise<void> {
 export async function saveDatabase(): Promise<void> {
   if (!db) return;
   const data = db.export();
-  const base64 = btoa(String.fromCharCode(...data));
+  // Convert in slices: spreading the whole export into String.fromCharCode()
+  // exceeds the engine's argument limit once the database passes ~100 KB.
+  let binary = "";
+  for (let i = 0; i < data.length; i += 0x8000) {
+    binary += String.fromCharCode(...data.subarray(i, i + 0x8000));
+  }
+  const base64 = btoa(binary);
   await Preferences.set({ key: DB_KEY, value: base64 });
 }
 
