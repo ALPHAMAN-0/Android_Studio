@@ -3,10 +3,13 @@
 ## Architecture / How it Works
 
 ```mermaid
-flowchart LR
-    A[User] --> B[Android Studio]
-    B --> C{Logic}
-    C --> D[(Data)]
-    C --> E[Output]
-    D --> C
+flowchart TD
+    EntryPoint --> AppShell
+    EntryPoint --> Services
+    EntryPoint --> AndroidShell
+    EntryPoint --> PublicAssets
+    AppShell --> Pages
+    AppShell --> Components
+    AppShell --> Hooks
+    Stores
 ```
